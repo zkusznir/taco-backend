@@ -7,6 +7,10 @@ module Api
         render json: UserRepresenter.one(user)
       end
 
+      def index
+        render json: UserRepresenter.all
+      end
+
       private
 
       def user

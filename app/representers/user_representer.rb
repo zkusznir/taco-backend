@@ -6,8 +6,13 @@ class UserRepresenter
       {
         id: user.id,
         name: user.name,
+        token: user.token,
         groups: user.groups,
       }
+    end
+
+    def all
+      User.all.only :id, :name
     end
   end
 end
