@@ -49,7 +49,7 @@ module PkoApi
       end
 
       def connection
-        Faraday.new(url: ::PkoApi::Base::API_URL) do |req|
+        ::Faraday.new(url: ::PkoApi::Base::API_URL) do |req|
           req.adapter Faraday.default_adapter
 
           req.headers["Authorization"] = "Bearer #{token}"

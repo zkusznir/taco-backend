@@ -4,13 +4,13 @@ module Api
   module V1
     class AccountsController < ApplicationController
       def index
-        render json: PkoApi::User::GetAccounts.call(token)
+        render json: PkoApi::User::GetAccounts.call(id, 1)
       end
 
       private
 
-      def token
-        params[:token]
+      def id
+        params[:id]
       end
     end
   end
