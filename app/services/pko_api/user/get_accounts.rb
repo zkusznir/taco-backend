@@ -2,25 +2,31 @@
 
 module PkoApi
   module User
-    class GetAccounts
+    class GetAccounts < ::PkoApi::Base
       class << self
-        def call(token)
-          new.call(token)
+        def call(user_id, bank_id)
+          new(user_id, bank_id).call
         end
       end
 
-      def call(_token)
+      def call
         response
+          .deep_symbolize_keys
           .fetch(:accounts, [])
           .map(&method(:account_details))
       end
 
       private
 
-      attr_reader :token
+      attr_reader :token, :bank_id
 
-      def initialize
-        @token = token
+      def initialize(user_id, bank_id)
+        @token = user(user_id).token
+        @bank_id = bank_id
+      end
+
+      def user(id)
+        @user ||= ::User.find(id)
       end
 
       def account_details(account)
@@ -31,32 +37,39 @@ module PkoApi
         }
       end
 
-      # TODO: Fetch from real API once it's alive
       def response
+        JSON.parse(raw_response.body)
+      end
+
+      def raw_response
+        connection.post do |req|
+          req.url "/#{bank_id}/v2_1.1/accounts/v2_1.1/getAccounts"
+          req.body = request_body.to_json
+        end
+      end
+
+      def connection
+        Faraday.new(url: ::PkoApi::Base::API_URL) do |req|
+          req.adapter Faraday.default_adapter
+
+          req.headers["Authorization"] = "Bearer #{token}"
+          req.headers["Accept-Encoding"] = "gzip"
+          req.headers["Accept-Language"] = "en-US"
+          req.headers["Accept-Charset"] = "utf-8"
+          req.headers["Content-Type"] = "application/json"
+          req.headers["X-JWS-SIGNATURE"] = "some-signature"
+        end
+      end
+
+      def request_body
         {
-          "responseHeader": {
-            "requestId": "3ec65c44-e80f-11e8-9f32-f2801f1b9fd1",
-            "sendDate": "2018-11-20T11:24:25.954Z",
-            "isCallback": false,
-          },
-          "accounts": [
-            {
-              "accountNumber": "PL88102024980000000000000667",
-              "accountTypeName": "ROR",
-              "accountType": {
-                "code": "ROR",
-                "description": "Rachunek oszczednosciowo-rozliczeniowy" }
-              },
-              {
-                "accountNumber": "PL88102024932323000000000337",
-                "accountTypeName": "LOK",
-                "accountType": {
-                  "code": "LOK",
-                  "description": "Lokata jak marzenie" }
-                },
-            ],
-            "pageInfo": {},
+          requestHeader: {
+            requestId: SecureRandom.uuid,
+            sendDate: Time.zone.now,
+            token: token,
+            tppId: ::PkoApi::Base::CLIENT_ID,
           }
+        }
       end
     end
   end
