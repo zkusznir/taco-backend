@@ -15,6 +15,10 @@ module Api
         render json: UserRepresenter.all_for(group)
       end
 
+      def offer
+        render json: OfferRepresenter.for(group)
+      end
+
       def create
         group = Group.create(group_params)
         group_users_params.each { |user_id| UserGroup.create(group: group, user_id: user_id) }

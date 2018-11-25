@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
       get "/groups/:id",            to: "groups#show"
       get "/groups/:id/users",      to: "groups#users"
+      get "/groups/:id/offer",      to: "groups#offer"
       get "/users/:user_id/groups", to: "groups#index"
 
       post "groups", to: "groups#create"
