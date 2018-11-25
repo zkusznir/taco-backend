@@ -9,7 +9,7 @@ class OfferRepresenter
         id: group.id,
         offer: {
           name: "Oferta rodzina",
-          details: "Wybrana specjalnie dla Ciebi",
+          details: "Wybrana specjalnie dla Ciebie",
           rrso_percentage: 6,
           dynamic_interest_percentage: 0,
         }
