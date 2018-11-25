@@ -11,6 +11,10 @@ module Api
         render json: GroupRepresenter.all_for(user)
       end
 
+      def users
+        render json: UserRepresenter.all_for(group)
+      end
+
       def create
         group = Group.create(group_params)
         group_users_params.each { |user_id| UserGroup.create(group: group, user_id: user_id) }
@@ -25,7 +29,7 @@ module Api
       end
 
       def user
-        @user ||= User.find(params[:id])
+        @user ||= User.find(params[:user_id])
       end
 
       def group_params

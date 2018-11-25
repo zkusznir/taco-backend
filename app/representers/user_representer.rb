@@ -14,5 +14,14 @@ class UserRepresenter
     def all
       User.all.only :id, :name
     end
+
+    def all_for(group)
+      group.users.map do |user|
+        {
+          id: user.id,
+          name: user.name,
+        }
+      end
+    end
   end
 end
