@@ -4,7 +4,7 @@ module Api
   module V1
     class AccountsController < ApplicationController
       def index
-        render json: PkoApi::User::GetAccounts.call(id, 1)
+        render json: PkoApi::User::GetAccounts.call(id)
       end
 
       private
